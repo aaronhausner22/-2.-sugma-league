@@ -60,30 +60,24 @@
           </div>
         </div>
 
-        <!-- Navigation Tabs & Edit Mode -->
-        <div class="flex items-center space-x-2">
-          <nav class="flex space-x-1 sm:space-x-2">
-            <button onclick="switchTab('standings')" id="nav-standings" class="tab-btn px-3.5 py-2 text-sm font-medium rounded-lg transition-colors flex items-center gap-2 bg-emerald-500 text-slate-950 shadow-sm">
-              <i data-lucide="bar-chart-3" class="w-4 h-4"></i> Standings
-            </button>
-            <button onclick="switchTab('keepers')" id="nav-keepers" class="tab-btn px-3.5 py-2 text-sm font-medium rounded-lg transition-colors flex items-center gap-2 text-slate-300 hover:text-white hover:bg-slate-800">
-              <i data-lucide="lock" class="w-4 h-4"></i> Keepers
-            </button>
-            <button onclick="switchTab('survival')" id="nav-survival" class="tab-btn px-3.5 py-2 text-sm font-medium rounded-lg transition-colors flex items-center gap-2 text-slate-300 hover:text-white hover:bg-slate-800">
-              <i data-lucide="flame" class="w-4 h-4"></i> Survival
-            </button>
-            <button onclick="switchTab('history')" id="nav-history" class="tab-btn px-3.5 py-2 text-sm font-medium rounded-lg transition-colors flex items-center gap-2 text-slate-300 hover:text-white hover:bg-slate-800">
-              <i data-lucide="history" class="w-4 h-4"></i> History
-            </button>
-            <button onclick="switchTab('rules')" id="nav-rules" class="tab-btn px-3.5 py-2 text-sm font-medium rounded-lg transition-colors flex items-center gap-2 text-slate-300 hover:text-white hover:bg-slate-800">
-              <i data-lucide="book-open" class="w-4 h-4"></i> Rules
-            </button>
-          </nav>
-          <div class="h-6 w-px bg-slate-800 mx-1"></div>
-          <button id="edit-mode-btn" onclick="toggleEditMode()" class="px-3 py-2 text-xs font-semibold rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/30 hover:bg-amber-500/30 flex items-center gap-1.5 transition-all">
-            <i data-lucide="edit-3" class="w-3.5 h-3.5"></i> <span id="edit-btn-text">Edit Live</span>
+        <!-- Navigation Tabs -->
+        <nav class="flex space-x-1 sm:space-x-2">
+          <button onclick="switchTab('standings')" id="nav-standings" class="tab-btn px-3.5 py-2 text-sm font-medium rounded-lg transition-colors flex items-center gap-2 bg-emerald-500 text-slate-950 shadow-sm">
+            <i data-lucide="bar-chart-3" class="w-4 h-4"></i> Standings
           </button>
-        </div>
+          <button onclick="switchTab('keepers')" id="nav-keepers" class="tab-btn px-3.5 py-2 text-sm font-medium rounded-lg transition-colors flex items-center gap-2 text-slate-300 hover:text-white hover:bg-slate-800">
+            <i data-lucide="lock" class="w-4 h-4"></i> Keepers
+          </button>
+          <button onclick="switchTab('survival')" id="nav-survival" class="tab-btn px-3.5 py-2 text-sm font-medium rounded-lg transition-colors flex items-center gap-2 text-slate-300 hover:text-white hover:bg-slate-800">
+            <i data-lucide="flame" class="w-4 h-4"></i> Survival
+          </button>
+          <button onclick="switchTab('history')" id="nav-history" class="tab-btn px-3.5 py-2 text-sm font-medium rounded-lg transition-colors flex items-center gap-2 text-slate-300 hover:text-white hover:bg-slate-800">
+            <i data-lucide="history" class="w-4 h-4"></i> History
+          </button>
+          <button onclick="switchTab('rules')" id="nav-rules" class="tab-btn px-3.5 py-2 text-sm font-medium rounded-lg transition-colors flex items-center gap-2 text-slate-300 hover:text-white hover:bg-slate-800">
+            <i data-lucide="book-open" class="w-4 h-4"></i> Rules
+          </button>
+        </nav>
       </div>
     </div>
   </header>
@@ -1597,32 +1591,11 @@
     </div>
   </footer>
 
-  <!-- SCRIPT FOR TAB SWITCHING & LUCIDE ICONS & LIVE EDIT -->
+  <!-- SCRIPT FOR TAB SWITCHING & LUCIDE ICONS -->
   <script>
     lucide.createIcons();
 
-    let isEditing = false;
-
-    function toggleEditMode() {
-      isEditing = !isEditing;
-      document.body.contentEditable = isEditing ? "true" : "false";
-
-      const btn = document.getElementById('edit-mode-btn');
-      const btnText = document.getElementById('edit-btn-text');
-
-      if (isEditing) {
-        btn.classList.remove('bg-amber-500/20', 'text-amber-300', 'border-amber-500/30');
-        btn.classList.add('bg-emerald-500', 'text-slate-950', 'border-emerald-400', 'font-bold');
-        btnText.innerText = 'Editing (Click to Lock)';
-      } else {
-        btn.classList.remove('bg-emerald-500', 'text-slate-950', 'border-emerald-400', 'font-bold');
-        btn.classList.add('bg-amber-500/20', 'text-amber-300', 'border-amber-500/30');
-        btnText.innerText = 'Edit Live';
-      }
-    }
-
     function switchTab(tabId) {
-      if (isEditing) toggleEditMode();
       // Hide all tabs
       document.querySelectorAll('.tab-content').forEach(el => {
         el.classList.remove('active');
