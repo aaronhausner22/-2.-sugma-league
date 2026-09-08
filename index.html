@@ -1,0 +1,1437 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sugma League • Fantasy Football Hub</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0fdf4',
+              500: '#22c55e',
+              600: '#16a34a',
+              700: '#15803d',
+            },
+            espn: '#d00',
+            darkBg: '#0f172a',
+            darkCard: '#1e293b',
+            darkBorder: '#334155'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+    body { font-family: 'Inter', sans-serif; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; animation: fadeIn 0.2s ease-in-out; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased selection:bg-emerald-500 selection:text-black">
+
+  <!-- TOP HEADER / NAV -->
+  <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <!-- Brand / League Name -->
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-400 flex items-center justify-center text-slate-950 font-black shadow-lg shadow-emerald-500/20">
+            <i data-lucide="trophy" class="w-5 h-5 text-slate-950"></i>
+          </div>
+          <div>
+            <h1 class="text-lg font-bold text-white flex items-center gap-2">
+              Sugma League
+              <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-red-500/10 text-red-400 border border-red-500/20">ESPN Fantasy</span>
+            </h1>
+            <p class="text-xs text-slate-400">Est. 2021 • 12 Teams • $110 Buy-in • Keeper League</p>
+          </div>
+        </div>
+
+        <!-- Navigation Tabs & Edit Mode -->
+        <div class="flex items-center space-x-2">
+          <nav class="flex space-x-1 sm:space-x-2">
+            <button onclick="switchTab('standings')" id="nav-standings" class="tab-btn px-3.5 py-2 text-sm font-medium rounded-lg transition-colors flex items-center gap-2 bg-emerald-500 text-slate-950 shadow-sm">
+              <i data-lucide="bar-chart-3" class="w-4 h-4"></i> Standings
+            </button>
+            <button onclick="switchTab('keepers')" id="nav-keepers" class="tab-btn px-3.5 py-2 text-sm font-medium rounded-lg transition-colors flex items-center gap-2 text-slate-300 hover:text-white hover:bg-slate-800">
+              <i data-lucide="lock" class="w-4 h-4"></i> Keepers
+            </button>
+            <button onclick="switchTab('history')" id="nav-history" class="tab-btn px-3.5 py-2 text-sm font-medium rounded-lg transition-colors flex items-center gap-2 text-slate-300 hover:text-white hover:bg-slate-800">
+              <i data-lucide="history" class="w-4 h-4"></i> History
+            </button>
+            <button onclick="switchTab('rules')" id="nav-rules" class="tab-btn px-3.5 py-2 text-sm font-medium rounded-lg transition-colors flex items-center gap-2 text-slate-300 hover:text-white hover:bg-slate-800">
+              <i data-lucide="book-open" class="w-4 h-4"></i> Rules
+            </button>
+          </nav>
+          <div class="h-6 w-px bg-slate-800 mx-1"></div>
+          <button id="edit-mode-btn" onclick="toggleEditMode()" class="px-3 py-2 text-xs font-semibold rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/30 hover:bg-amber-500/30 flex items-center gap-1.5 transition-all">
+            <i data-lucide="edit-3" class="w-3.5 h-3.5"></i> <span id="edit-btn-text">Edit Live</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
+
+    <!-- ======================================================== -->
+    <!-- TAB 1: STANDINGS -->
+    <!-- ======================================================== -->
+    <section id="tab-standings" class="tab-content active space-y-6">
+      <!-- Quick Info Bar -->
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 flex items-center gap-4">
+          <div class="p-3 bg-emerald-500/10 text-emerald-400 rounded-lg"><i data-lucide="crown" class="w-6 h-6"></i></div>
+          <div>
+            <div class="text-xs text-slate-400 uppercase font-bold tracking-wider">Current Leader</div>
+            <div class="text-base font-bold text-white">CHILIS BOX MUNCH (0-0)</div>
+          </div>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 flex items-center gap-4">
+          <div class="p-3 bg-blue-500/10 text-blue-400 rounded-lg"><i data-lucide="flame" class="w-6 h-6"></i></div>
+          <div>
+            <div class="text-xs text-slate-400 uppercase font-bold tracking-wider">High Points (PF)</div>
+            <div class="text-base font-bold text-white">0.0 pts (Pre-Season)</div>
+          </div>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 flex items-center gap-4">
+          <div class="p-3 bg-amber-500/10 text-amber-400 rounded-lg"><i data-lucide="trending-up" class="w-6 h-6"></i></div>
+          <div>
+            <div class="text-xs text-slate-400 uppercase font-bold tracking-wider">Playoff Cutoff</div>
+            <div class="text-base font-bold text-white">Top 8 Teams (Weeks 14–16)</div>
+          </div>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 flex items-center gap-4">
+          <div class="p-3 bg-rose-500/10 text-rose-400 rounded-lg"><i data-lucide="skull" class="w-6 h-6"></i></div>
+          <div>
+            <div class="text-xs text-slate-400 uppercase font-bold tracking-wider">Playoff Elimination</div>
+            <div class="text-base font-bold text-white">Non-Playoff (Seeds 9–12)</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Standings Table Card -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
+        <div class="p-5 border-b border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div>
+            <h2 class="text-lg font-bold text-white flex items-center gap-2">
+              <i data-lucide="award" class="w-5 h-5 text-emerald-400"></i>
+              League Standings & Playoff Seeding
+            </h2>
+            <p class="text-xs text-slate-400">Seeds 1–4: 4 Division Winners • Seeds 5–8: 4 Wild Cards (Weeks 14–16 • Higher Seed +5 Home Advantage)</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-slate-800 text-slate-300 border border-slate-700">
+              <span class="w-2 h-2 rounded-full bg-emerald-400"></span> Synced from ESPN
+            </span>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm">
+            <thead class="bg-slate-950/60 text-slate-400 text-xs uppercase tracking-wider border-b border-slate-800">
+              <tr>
+                <th class="py-3.5 px-4 font-semibold">Rank</th>
+                <th class="py-3.5 px-4 font-semibold">Team & Manager</th>
+                <th class="py-3.5 px-4 font-semibold text-center">Record</th>
+                <th class="py-3.5 px-4 font-semibold text-right">Win %</th>
+                <th class="py-3.5 px-4 font-semibold text-right">PF</th>
+                <th class="py-3.5 px-4 font-semibold text-right">PA</th>
+                <th class="py-3.5 px-4 font-semibold text-center">Streak</th>
+                <th class="py-3.5 px-4 font-semibold text-center">Playoff Status</th>
+              </tr>
+            </thead>
+            <tbody id="standings-table-body" class="divide-y divide-slate-800/60 font-medium">
+              <!-- Seed 1: Div Winner -->
+              <tr class="hover:bg-slate-800/40 bg-emerald-950/10">
+                <td class="py-4 px-4 font-bold text-emerald-400 text-center w-12">1</td>
+                <td class="py-4 px-4">
+                  <div class="font-bold text-white">Ron Demsher</div>
+                  <div class="text-xs text-slate-400">CHILIS BOX MUNCH • North Div Leader</div>
+                </td>
+                <td class="py-4 px-4 text-center font-bold text-slate-100">0-0-0</td>
+                <td class="py-4 px-4 text-right text-slate-300">.000</td>
+                <td class="py-4 px-4 text-right font-semibold text-emerald-400">0.0</td>
+                <td class="py-4 px-4 text-right text-slate-400">0.0</td>
+                <td class="py-4 px-4 text-center"><span class="px-2 py-0.5 rounded text-xs bg-slate-800 text-slate-400">--</span></td>
+                <td class="py-4 px-4 text-center"><span class="px-2 py-0.5 rounded-full text-xs bg-emerald-500/20 text-emerald-300 font-semibold border border-emerald-500/30">Div Winner (Seed 1)</span></td>
+              </tr>
+              <!-- Seed 2: Div Winner -->
+              <tr class="hover:bg-slate-800/40 bg-emerald-950/10">
+                <td class="py-4 px-4 font-bold text-emerald-400 text-center w-12">2</td>
+                <td class="py-4 px-4">
+                  <div class="font-bold text-white">Austin Carmody</div>
+                  <div class="text-xs text-slate-400">BALLZ DEEP • South Div Leader</div>
+                </td>
+                <td class="py-4 px-4 text-center font-bold text-slate-100">0-0-0</td>
+                <td class="py-4 px-4 text-right text-slate-300">.000</td>
+                <td class="py-4 px-4 text-right font-semibold text-emerald-400">0.0</td>
+                <td class="py-4 px-4 text-right text-slate-400">0.0</td>
+                <td class="py-4 px-4 text-center"><span class="px-2 py-0.5 rounded text-xs bg-slate-800 text-slate-400">--</span></td>
+                <td class="py-4 px-4 text-center"><span class="px-2 py-0.5 rounded-full text-xs bg-emerald-500/20 text-emerald-300 font-semibold border border-emerald-500/30">Div Winner (Seed 2)</span></td>
+              </tr>
+              <!-- Seed 3: Div Winner -->
+              <tr class="hover:bg-slate-800/40 bg-emerald-950/10">
+                <td class="py-4 px-4 font-bold text-emerald-400 text-center w-12">3</td>
+                <td class="py-4 px-4">
+                  <div class="font-bold text-white">Joey Kratz</div>
+                  <div class="text-xs text-slate-400">The Kratz Bombz • East Div Leader</div>
+                </td>
+                <td class="py-4 px-4 text-center font-bold text-slate-100">0-0-0</td>
+                <td class="py-4 px-4 text-right text-slate-300">.000</td>
+                <td class="py-4 px-4 text-right font-semibold text-emerald-400">0.0</td>
+                <td class="py-4 px-4 text-right text-slate-400">0.0</td>
+                <td class="py-4 px-4 text-center"><span class="px-2 py-0.5 rounded text-xs bg-slate-800 text-slate-400">--</span></td>
+                <td class="py-4 px-4 text-center"><span class="px-2 py-0.5 rounded-full text-xs bg-emerald-500/20 text-emerald-300 font-semibold border border-emerald-500/30">Div Winner (Seed 3)</span></td>
+              </tr>
+              <!-- Seed 4: Div Winner -->
+              <tr class="hover:bg-slate-800/40 bg-emerald-950/10">
+                <td class="py-4 px-4 font-bold text-emerald-400 text-center w-12">4</td>
+                <td class="py-4 px-4">
+                  <div class="font-bold text-white">Spencer Poklop</div>
+                  <div class="text-xs text-slate-400">Gator's B*tches • West Div Leader</div>
+                </td>
+                <td class="py-4 px-4 text-center font-bold text-slate-100">0-0-0</td>
+                <td class="py-4 px-4 text-right text-slate-300">.000</td>
+                <td class="py-4 px-4 text-right font-semibold text-emerald-400">0.0</td>
+                <td class="py-4 px-4 text-right text-slate-400">0.0</td>
+                <td class="py-4 px-4 text-center"><span class="px-2 py-0.5 rounded text-xs bg-slate-800 text-slate-400">--</span></td>
+                <td class="py-4 px-4 text-center"><span class="px-2 py-0.5 rounded-full text-xs bg-emerald-500/20 text-emerald-300 font-semibold border border-emerald-500/30">Div Winner (Seed 4)</span></td>
+              </tr>
+              <!-- Seed 5: Wild Card -->
+              <tr class="hover:bg-slate-800/40">
+                <td class="py-4 px-4 font-bold text-blue-400 text-center w-12">5</td>
+                <td class="py-4 px-4">
+                  <div class="font-bold text-white">Sufyan Pandit</div>
+                  <div class="text-xs text-slate-400">CEO of Pubes • North Div</div>
+                </td>
+                <td class="py-4 px-4 text-center font-bold text-slate-100">0-0-0</td>
+                <td class="py-4 px-4 text-right text-slate-300">.000</td>
+                <td class="py-4 px-4 text-right font-semibold text-slate-200">0.0</td>
+                <td class="py-4 px-4 text-right text-slate-400">0.0</td>
+                <td class="py-4 px-4 text-center"><span class="px-2 py-0.5 rounded text-xs bg-slate-800 text-slate-400">--</span></td>
+                <td class="py-4 px-4 text-center"><span class="px-2 py-0.5 rounded-full text-xs bg-blue-500/20 text-blue-300 font-semibold border border-blue-500/30">Wild Card (Seed 5)</span></td>
+              </tr>
+              <!-- Seed 6: Wild Card -->
+              <tr class="hover:bg-slate-800/40">
+                <td class="py-4 px-4 font-bold text-blue-400 text-center w-12">6</td>
+                <td class="py-4 px-4">
+                  <div class="font-bold text-white">Aaron Hausner</div>
+                  <div class="text-xs text-slate-400">Take my Load • South Div</div>
+                </td>
+                <td class="py-4 px-4 text-center font-bold text-slate-100">0-0-0</td>
+                <td class="py-4 px-4 text-right text-slate-300">.000</td>
+                <td class="py-4 px-4 text-right font-semibold text-slate-200">0.0</td>
+                <td class="py-4 px-4 text-right text-slate-400">0.0</td>
+                <td class="py-4 px-4 text-center"><span class="px-2 py-0.5 rounded text-xs bg-slate-800 text-slate-400">--</span></td>
+                <td class="py-4 px-4 text-center"><span class="px-2 py-0.5 rounded-full text-xs bg-blue-500/20 text-blue-300 font-semibold border border-blue-500/30">Wild Card (Seed 6)</span></td>
+              </tr>
+              <!-- Seed 7: Wild Card -->
+              <tr class="hover:bg-slate-800/40">
+                <td class="py-4 px-4 font-bold text-blue-400 text-center w-12">7</td>
+                <td class="py-4 px-4">
+                  <div class="font-bold text-white">Orin Gilchrest</div>
+                  <div class="text-xs text-slate-400">Boke Street Bandits • East Div</div>
+                </td>
+                <td class="py-4 px-4 text-center font-bold text-slate-100">0-0-0</td>
+                <td class="py-4 px-4 text-right text-slate-300">.000</td>
+                <td class="py-4 px-4 text-right font-semibold text-slate-200">0.0</td>
+                <td class="py-4 px-4 text-right text-slate-400">0.0</td>
+                <td class="py-4 px-4 text-center"><span class="px-2 py-0.5 rounded text-xs bg-slate-800 text-slate-400">--</span></td>
+                <td class="py-4 px-4 text-center"><span class="px-2 py-0.5 rounded-full text-xs bg-blue-500/20 text-blue-300 font-semibold border border-blue-500/30">Wild Card (Seed 7)</span></td>
+              </tr>
+              <!-- Seed 8: Wild Card -->
+              <tr class="hover:bg-slate-800/40">
+                <td class="py-4 px-4 font-bold text-blue-400 text-center w-12">8</td>
+                <td class="py-4 px-4">
+                  <div class="font-bold text-white">Will Vance</div>
+                  <div class="text-xs text-slate-400">Mr. Will and the Borger Boys • West Div</div>
+                </td>
+                <td class="py-4 px-4 text-center font-bold text-slate-100">0-0-0</td>
+                <td class="py-4 px-4 text-right text-slate-300">.000</td>
+                <td class="py-4 px-4 text-right font-semibold text-slate-200">0.0</td>
+                <td class="py-4 px-4 text-right text-slate-400">0.0</td>
+                <td class="py-4 px-4 text-center"><span class="px-2 py-0.5 rounded text-xs bg-slate-800 text-slate-400">--</span></td>
+                <td class="py-4 px-4 text-center"><span class="px-2 py-0.5 rounded-full text-xs bg-blue-500/20 text-blue-300 font-semibold border border-blue-500/30">Wild Card (Seed 8)</span></td>
+              </tr>
+              <!-- Line divider: Non-Playoff Elimination (Seeds 9-12) -->
+              <tr class="border-t-2 border-slate-700/80 bg-rose-950/20 hover:bg-slate-800/40">
+                <td class="py-4 px-4 font-bold text-rose-400 text-center w-12">9</td>
+                <td class="py-4 px-4">
+                  <div class="font-bold text-rose-200">Griffin Knoll</div>
+                  <div class="text-xs text-rose-400/80">Fightin' Knollini • North Div</div>
+                </td>
+                <td class="py-4 px-4 text-center font-bold text-rose-300">0-0-0</td>
+                <td class="py-4 px-4 text-right text-rose-400/80">.000</td>
+                <td class="py-4 px-4 text-right font-semibold text-rose-300">0.0</td>
+                <td class="py-4 px-4 text-right text-slate-400">0.0</td>
+                <td class="py-4 px-4 text-center"><span class="px-2 py-0.5 rounded text-xs bg-slate-800 text-slate-400">--</span></td>
+                <td class="py-4 px-4 text-center"><span class="px-2 py-0.5 rounded-full text-xs bg-rose-500/20 text-rose-400 font-semibold border border-rose-500/30">Eliminated</span></td>
+              </tr>
+              <tr class="hover:bg-slate-800/40 bg-rose-950/20">
+                <td class="py-4 px-4 font-bold text-rose-400 text-center w-12">10</td>
+                <td class="py-4 px-4">
+                  <div class="font-bold text-rose-200">Jake Aron</div>
+                  <div class="text-xs text-rose-400/80">Richard Cranium • South Div</div>
+                </td>
+                <td class="py-4 px-4 text-center font-bold text-rose-300">0-0-0</td>
+                <td class="py-4 px-4 text-right text-rose-400/80">.000</td>
+                <td class="py-4 px-4 text-right font-semibold text-rose-300">0.0</td>
+                <td class="py-4 px-4 text-right text-slate-400">0.0</td>
+                <td class="py-4 px-4 text-center"><span class="px-2 py-0.5 rounded text-xs bg-slate-800 text-slate-400">--</span></td>
+                <td class="py-4 px-4 text-center"><span class="px-2 py-0.5 rounded-full text-xs bg-rose-500/20 text-rose-400 font-semibold border border-rose-500/30">Eliminated</span></td>
+              </tr>
+              <!-- Non-Playoff Zone -->
+              <tr class="hover:bg-slate-800/40 bg-rose-950/20">
+                <td class="py-4 px-4 font-bold text-rose-400 text-center w-12">11</td>
+                <td class="py-4 px-4">
+                  <div class="font-bold text-rose-200">Robert Garmoe</div>
+                  <div class="text-xs text-rose-400/80">Dirty Mike and the Boys • East Div</div>
+                </td>
+                <td class="py-4 px-4 text-center font-bold text-rose-300">0-0-0</td>
+                <td class="py-4 px-4 text-right text-rose-400/80">.000</td>
+                <td class="py-4 px-4 text-right font-semibold text-rose-300">0.0</td>
+                <td class="py-4 px-4 text-right text-slate-400">0.0</td>
+                <td class="py-4 px-4 text-center"><span class="px-2 py-0.5 rounded text-xs bg-slate-800 text-slate-400">--</span></td>
+                <td class="py-4 px-4 text-center"><span class="px-2 py-0.5 rounded-full text-xs bg-rose-500/20 text-rose-400 font-semibold border border-rose-500/30">Eliminated</span></td>
+              </tr>
+              <tr class="hover:bg-slate-800/40 bg-rose-950/20">
+                <td class="py-4 px-4 font-bold text-rose-400 text-center w-12">12</td>
+                <td class="py-4 px-4">
+                  <div class="font-bold text-rose-200">Ryan Kipping</div>
+                  <div class="text-xs text-rose-400/80">Just the Kip 🍆 • West Div</div>
+                </td>
+                <td class="py-4 px-4 text-center font-bold text-rose-300">0-0-0</td>
+                <td class="py-4 px-4 text-right text-rose-400/80">.000</td>
+                <td class="py-4 px-4 text-right font-semibold text-rose-300">0.0</td>
+                <td class="py-4 px-4 text-right text-slate-400">0.0</td>
+                <td class="py-4 px-4 text-center"><span class="px-2 py-0.5 rounded text-xs bg-slate-800 text-slate-400">--</span></td>
+                <td class="py-4 px-4 text-center"><span class="px-2 py-0.5 rounded-full text-xs bg-rose-500/20 text-rose-400 font-semibold border border-rose-500/30">Eliminated</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- TAB 2: KEEPERS SECTION -->
+    <!-- ======================================================== -->
+    <section id="tab-keepers" class="tab-content space-y-6">
+      <div class="bg-gradient-to-r from-slate-900 to-slate-800 border border-slate-800 rounded-2xl p-6">
+        <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div>
+            <h2 class="text-xl font-bold text-white flex items-center gap-2">
+              <i data-lucide="shield-check" class="w-6 h-6 text-emerald-400"></i>
+              Official League Keepers Board
+            </h2>
+            <p class="text-sm text-slate-400 mt-1">
+              Max 2 Keepers per team • Max 3 consecutive keeper years (exception: Max 5 consecutive years if drafted after Round 5) • Cost = Prior draft round.
+            </p>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="px-3 py-1.5 rounded-lg bg-slate-800/80 border border-slate-700 text-slate-400 text-xs font-semibold">
+              Deadline: N/A
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Keepers Grid By Team (All 12 Teams) -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        
+        <!-- Team 1 (North) -->
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 hover:border-slate-700 transition-all shadow-md">
+          <div class="flex justify-between items-center mb-3 pb-2 border-b border-slate-800">
+            <div>
+              <h3 class="font-bold text-white">Ron Demsher</h3>
+              <span class="text-xs text-emerald-400 font-semibold">CHILIS BOX MUNCH • North</span>
+            </div>
+            <span class="px-2 py-0.5 rounded text-xs font-semibold bg-emerald-500/20 text-emerald-300">Keepers</span>
+          </div>
+          <div class="space-y-3">
+            <div class="p-3 bg-slate-950/70 rounded-lg border border-slate-800/80 flex items-center justify-between gap-2">
+              <div>
+                <div class="font-bold text-sm text-white">Keeper 1</div>
+                <div class="text-xs text-slate-400">Position • Team</div>
+              </div>
+              <div class="flex items-center gap-2 text-right flex-shrink-0">
+                <span class="text-xs font-semibold px-2 py-1 bg-slate-800/90 text-amber-300 rounded border border-slate-700">1/3</span>
+                <span class="text-xs font-bold px-2 py-1 bg-slate-800/90 text-emerald-400 rounded border border-slate-700">Cost: Round --</span>
+              </div>
+            </div>
+            <div class="p-3 bg-slate-950/70 rounded-lg border border-slate-800/80 flex items-center justify-between gap-2">
+              <div>
+                <div class="font-bold text-sm text-white">Keeper 2</div>
+                <div class="text-xs text-slate-400">Position • Team</div>
+              </div>
+              <div class="flex items-center gap-2 text-right flex-shrink-0">
+                <span class="text-xs font-semibold px-2 py-1 bg-slate-800/90 text-amber-300 rounded border border-slate-700">1/3</span>
+                <span class="text-xs font-bold px-2 py-1 bg-slate-800/90 text-emerald-400 rounded border border-slate-700">Cost: Round --</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Team 2 (North) -->
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 hover:border-slate-700 transition-all shadow-md">
+          <div class="flex justify-between items-center mb-3 pb-2 border-b border-slate-800">
+            <div>
+              <h3 class="font-bold text-white">Sufyan Pandit</h3>
+              <span class="text-xs text-emerald-400 font-semibold">CEO of Pubes • North</span>
+            </div>
+            <span class="px-2 py-0.5 rounded text-xs font-semibold bg-emerald-500/20 text-emerald-300">Keepers</span>
+          </div>
+          <div class="space-y-3">
+            <div class="p-3 bg-slate-950/70 rounded-lg border border-slate-800/80 flex items-center justify-between gap-2">
+              <div>
+                <div class="font-bold text-sm text-white">Keeper 1</div>
+                <div class="text-xs text-slate-400">Position • Team</div>
+              </div>
+              <div class="flex items-center gap-2 text-right flex-shrink-0">
+                <span class="text-xs font-semibold px-2 py-1 bg-slate-800/90 text-amber-300 rounded border border-slate-700">1/3</span>
+                <span class="text-xs font-bold px-2 py-1 bg-slate-800/90 text-emerald-400 rounded border border-slate-700">Cost: Round --</span>
+              </div>
+            </div>
+            <div class="p-3 bg-slate-950/70 rounded-lg border border-slate-800/80 flex items-center justify-between gap-2">
+              <div>
+                <div class="font-bold text-sm text-white">Keeper 2</div>
+                <div class="text-xs text-slate-400">Position • Team</div>
+              </div>
+              <div class="flex items-center gap-2 text-right flex-shrink-0">
+                <span class="text-xs font-semibold px-2 py-1 bg-slate-800/90 text-amber-300 rounded border border-slate-700">1/3</span>
+                <span class="text-xs font-bold px-2 py-1 bg-slate-800/90 text-emerald-400 rounded border border-slate-700">Cost: Round --</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Team 3 (North) -->
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 hover:border-slate-700 transition-all shadow-md">
+          <div class="flex justify-between items-center mb-3 pb-2 border-b border-slate-800">
+            <div>
+              <h3 class="font-bold text-white">Griffin Knoll</h3>
+              <span class="text-xs text-emerald-400 font-semibold">Fightin' Knollini • North</span>
+            </div>
+            <span class="px-2 py-0.5 rounded text-xs font-semibold bg-emerald-500/20 text-emerald-300">Keepers</span>
+          </div>
+          <div class="space-y-3">
+            <div class="p-3 bg-slate-950/70 rounded-lg border border-slate-800/80 flex items-center justify-between gap-2">
+              <div>
+                <div class="font-bold text-sm text-white">Keeper 1</div>
+                <div class="text-xs text-slate-400">Position • Team</div>
+              </div>
+              <div class="flex items-center gap-2 text-right flex-shrink-0">
+                <span class="text-xs font-semibold px-2 py-1 bg-slate-800/90 text-amber-300 rounded border border-slate-700">1/3</span>
+                <span class="text-xs font-bold px-2 py-1 bg-slate-800/90 text-emerald-400 rounded border border-slate-700">Cost: Round --</span>
+              </div>
+            </div>
+            <div class="p-3 bg-slate-950/70 rounded-lg border border-slate-800/80 flex items-center justify-between gap-2">
+              <div>
+                <div class="font-bold text-sm text-white">Keeper 2</div>
+                <div class="text-xs text-slate-400">Position • Team</div>
+              </div>
+              <div class="flex items-center gap-2 text-right flex-shrink-0">
+                <span class="text-xs font-semibold px-2 py-1 bg-slate-800/90 text-amber-300 rounded border border-slate-700">1/3</span>
+                <span class="text-xs font-bold px-2 py-1 bg-slate-800/90 text-emerald-400 rounded border border-slate-700">Cost: Round --</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Team 4 (South) -->
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 hover:border-slate-700 transition-all shadow-md">
+          <div class="flex justify-between items-center mb-3 pb-2 border-b border-slate-800">
+            <div>
+              <h3 class="font-bold text-white">Austin Carmody</h3>
+              <span class="text-xs text-blue-400 font-semibold">BALLZ DEEP • South</span>
+            </div>
+            <span class="px-2 py-0.5 rounded text-xs font-semibold bg-emerald-500/20 text-emerald-300">Keepers</span>
+          </div>
+          <div class="space-y-3">
+            <div class="p-3 bg-slate-950/70 rounded-lg border border-slate-800/80 flex items-center justify-between gap-2">
+              <div>
+                <div class="font-bold text-sm text-white">Keeper 1</div>
+                <div class="text-xs text-slate-400">Position • Team</div>
+              </div>
+              <div class="flex items-center gap-2 text-right flex-shrink-0">
+                <span class="text-xs font-semibold px-2 py-1 bg-slate-800/90 text-amber-300 rounded border border-slate-700">1/3</span>
+                <span class="text-xs font-bold px-2 py-1 bg-slate-800/90 text-emerald-400 rounded border border-slate-700">Cost: Round --</span>
+              </div>
+            </div>
+            <div class="p-3 bg-slate-950/70 rounded-lg border border-slate-800/80 flex items-center justify-between gap-2">
+              <div>
+                <div class="font-bold text-sm text-white">Keeper 2</div>
+                <div class="text-xs text-slate-400">Position • Team</div>
+              </div>
+              <div class="flex items-center gap-2 text-right flex-shrink-0">
+                <span class="text-xs font-semibold px-2 py-1 bg-slate-800/90 text-amber-300 rounded border border-slate-700">1/3</span>
+                <span class="text-xs font-bold px-2 py-1 bg-slate-800/90 text-emerald-400 rounded border border-slate-700">Cost: Round --</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Team 5 (South) -->
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 hover:border-slate-700 transition-all shadow-md">
+          <div class="flex justify-between items-center mb-3 pb-2 border-b border-slate-800">
+            <div>
+              <h3 class="font-bold text-white">Aaron Hausner</h3>
+              <span class="text-xs text-blue-400 font-semibold">Take my Load • South</span>
+            </div>
+            <span class="px-2 py-0.5 rounded text-xs font-semibold bg-emerald-500/20 text-emerald-300">Keepers</span>
+          </div>
+          <div class="space-y-3">
+            <div class="p-3 bg-slate-950/70 rounded-lg border border-slate-800/80 flex items-center justify-between gap-2">
+              <div>
+                <div class="font-bold text-sm text-white">Keeper 1</div>
+                <div class="text-xs text-slate-400">Position • Team</div>
+              </div>
+              <div class="flex items-center gap-2 text-right flex-shrink-0">
+                <span class="text-xs font-semibold px-2 py-1 bg-slate-800/90 text-amber-300 rounded border border-slate-700">1/3</span>
+                <span class="text-xs font-bold px-2 py-1 bg-slate-800/90 text-emerald-400 rounded border border-slate-700">Cost: Round --</span>
+              </div>
+            </div>
+            <div class="p-3 bg-slate-950/70 rounded-lg border border-slate-800/80 flex items-center justify-between gap-2">
+              <div>
+                <div class="font-bold text-sm text-white">Keeper 2</div>
+                <div class="text-xs text-slate-400">Position • Team</div>
+              </div>
+              <div class="flex items-center gap-2 text-right flex-shrink-0">
+                <span class="text-xs font-semibold px-2 py-1 bg-slate-800/90 text-amber-300 rounded border border-slate-700">1/3</span>
+                <span class="text-xs font-bold px-2 py-1 bg-slate-800/90 text-emerald-400 rounded border border-slate-700">Cost: Round --</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Team 6 (South) -->
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 hover:border-slate-700 transition-all shadow-md">
+          <div class="flex justify-between items-center mb-3 pb-2 border-b border-slate-800">
+            <div>
+              <h3 class="font-bold text-white">Jake Aron</h3>
+              <span class="text-xs text-blue-400 font-semibold">Richard Cranium • South</span>
+            </div>
+            <span class="px-2 py-0.5 rounded text-xs font-semibold bg-emerald-500/20 text-emerald-300">Keepers</span>
+          </div>
+          <div class="space-y-3">
+            <div class="p-3 bg-slate-950/70 rounded-lg border border-slate-800/80 flex items-center justify-between gap-2">
+              <div>
+                <div class="font-bold text-sm text-white">Keeper 1</div>
+                <div class="text-xs text-slate-400">Position • Team</div>
+              </div>
+              <div class="flex items-center gap-2 text-right flex-shrink-0">
+                <span class="text-xs font-semibold px-2 py-1 bg-slate-800/90 text-amber-300 rounded border border-slate-700">1/3</span>
+                <span class="text-xs font-bold px-2 py-1 bg-slate-800/90 text-emerald-400 rounded border border-slate-700">Cost: Round --</span>
+              </div>
+            </div>
+            <div class="p-3 bg-slate-950/70 rounded-lg border border-slate-800/80 flex items-center justify-between gap-2">
+              <div>
+                <div class="font-bold text-sm text-white">Keeper 2</div>
+                <div class="text-xs text-slate-400">Position • Team</div>
+              </div>
+              <div class="flex items-center gap-2 text-right flex-shrink-0">
+                <span class="text-xs font-semibold px-2 py-1 bg-slate-800/90 text-amber-300 rounded border border-slate-700">1/3</span>
+                <span class="text-xs font-bold px-2 py-1 bg-slate-800/90 text-emerald-400 rounded border border-slate-700">Cost: Round --</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Team 7 (East) -->
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 hover:border-slate-700 transition-all shadow-md">
+          <div class="flex justify-between items-center mb-3 pb-2 border-b border-slate-800">
+            <div>
+              <h3 class="font-bold text-white">Joey Kratz</h3>
+              <span class="text-xs text-amber-400 font-semibold">The Kratz Bombz • East</span>
+            </div>
+            <span class="px-2 py-0.5 rounded text-xs font-semibold bg-emerald-500/20 text-emerald-300">Keepers</span>
+          </div>
+          <div class="space-y-3">
+            <div class="p-3 bg-slate-950/70 rounded-lg border border-slate-800/80 flex items-center justify-between gap-2">
+              <div>
+                <div class="font-bold text-sm text-white">Keeper 1</div>
+                <div class="text-xs text-slate-400">Position • Team</div>
+              </div>
+              <div class="flex items-center gap-2 text-right flex-shrink-0">
+                <span class="text-xs font-semibold px-2 py-1 bg-slate-800/90 text-amber-300 rounded border border-slate-700">1/3</span>
+                <span class="text-xs font-bold px-2 py-1 bg-slate-800/90 text-emerald-400 rounded border border-slate-700">Cost: Round --</span>
+              </div>
+            </div>
+            <div class="p-3 bg-slate-950/70 rounded-lg border border-slate-800/80 flex items-center justify-between gap-2">
+              <div>
+                <div class="font-bold text-sm text-white">Keeper 2</div>
+                <div class="text-xs text-slate-400">Position • Team</div>
+              </div>
+              <div class="flex items-center gap-2 text-right flex-shrink-0">
+                <span class="text-xs font-semibold px-2 py-1 bg-slate-800/90 text-amber-300 rounded border border-slate-700">1/3</span>
+                <span class="text-xs font-bold px-2 py-1 bg-slate-800/90 text-emerald-400 rounded border border-slate-700">Cost: Round --</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Team 8 (East) -->
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 hover:border-slate-700 transition-all shadow-md">
+          <div class="flex justify-between items-center mb-3 pb-2 border-b border-slate-800">
+            <div>
+              <h3 class="font-bold text-white">Orin Gilchrest</h3>
+              <span class="text-xs text-amber-400 font-semibold">Boke Street Bandits • East</span>
+            </div>
+            <span class="px-2 py-0.5 rounded text-xs font-semibold bg-emerald-500/20 text-emerald-300">Keepers</span>
+          </div>
+          <div class="space-y-3">
+            <div class="p-3 bg-slate-950/70 rounded-lg border border-slate-800/80 flex items-center justify-between gap-2">
+              <div>
+                <div class="font-bold text-sm text-white">Keeper 1</div>
+                <div class="text-xs text-slate-400">Position • Team</div>
+              </div>
+              <div class="flex items-center gap-2 text-right flex-shrink-0">
+                <span class="text-xs font-semibold px-2 py-1 bg-slate-800/90 text-amber-300 rounded border border-slate-700">1/3</span>
+                <span class="text-xs font-bold px-2 py-1 bg-slate-800/90 text-emerald-400 rounded border border-slate-700">Cost: Round --</span>
+              </div>
+            </div>
+            <div class="p-3 bg-slate-950/70 rounded-lg border border-slate-800/80 flex items-center justify-between gap-2">
+              <div>
+                <div class="font-bold text-sm text-white">Keeper 2</div>
+                <div class="text-xs text-slate-400">Position • Team</div>
+              </div>
+              <div class="flex items-center gap-2 text-right flex-shrink-0">
+                <span class="text-xs font-semibold px-2 py-1 bg-slate-800/90 text-amber-300 rounded border border-slate-700">1/3</span>
+                <span class="text-xs font-bold px-2 py-1 bg-slate-800/90 text-emerald-400 rounded border border-slate-700">Cost: Round --</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Team 9 (East) -->
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 hover:border-slate-700 transition-all shadow-md">
+          <div class="flex justify-between items-center mb-3 pb-2 border-b border-slate-800">
+            <div>
+              <h3 class="font-bold text-white">Robert Garmoe</h3>
+              <span class="text-xs text-amber-400 font-semibold">Dirty Mike & Boys • East</span>
+            </div>
+            <span class="px-2 py-0.5 rounded text-xs font-semibold bg-emerald-500/20 text-emerald-300">Keepers</span>
+          </div>
+          <div class="space-y-3">
+            <div class="p-3 bg-slate-950/70 rounded-lg border border-slate-800/80 flex items-center justify-between gap-2">
+              <div>
+                <div class="font-bold text-sm text-white">Keeper 1</div>
+                <div class="text-xs text-slate-400">Position • Team</div>
+              </div>
+              <div class="flex items-center gap-2 text-right flex-shrink-0">
+                <span class="text-xs font-semibold px-2 py-1 bg-slate-800/90 text-amber-300 rounded border border-slate-700">1/3</span>
+                <span class="text-xs font-bold px-2 py-1 bg-slate-800/90 text-emerald-400 rounded border border-slate-700">Cost: Round --</span>
+              </div>
+            </div>
+            <div class="p-3 bg-slate-950/70 rounded-lg border border-slate-800/80 flex items-center justify-between gap-2">
+              <div>
+                <div class="font-bold text-sm text-white">Keeper 2</div>
+                <div class="text-xs text-slate-400">Position • Team</div>
+              </div>
+              <div class="flex items-center gap-2 text-right flex-shrink-0">
+                <span class="text-xs font-semibold px-2 py-1 bg-slate-800/90 text-amber-300 rounded border border-slate-700">1/3</span>
+                <span class="text-xs font-bold px-2 py-1 bg-slate-800/90 text-emerald-400 rounded border border-slate-700">Cost: Round --</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Team 10 (West) -->
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 hover:border-slate-700 transition-all shadow-md">
+          <div class="flex justify-between items-center mb-3 pb-2 border-b border-slate-800">
+            <div>
+              <h3 class="font-bold text-white">Spencer Poklop</h3>
+              <span class="text-xs text-purple-400 font-semibold">Gator's B*tches • West</span>
+            </div>
+            <span class="px-2 py-0.5 rounded text-xs font-semibold bg-emerald-500/20 text-emerald-300">Keepers</span>
+          </div>
+          <div class="space-y-3">
+            <div class="p-3 bg-slate-950/70 rounded-lg border border-slate-800/80 flex items-center justify-between gap-2">
+              <div>
+                <div class="font-bold text-sm text-white">Keeper 1</div>
+                <div class="text-xs text-slate-400">Position • Team</div>
+              </div>
+              <div class="flex items-center gap-2 text-right flex-shrink-0">
+                <span class="text-xs font-semibold px-2 py-1 bg-slate-800/90 text-amber-300 rounded border border-slate-700">1/3</span>
+                <span class="text-xs font-bold px-2 py-1 bg-slate-800/90 text-emerald-400 rounded border border-slate-700">Cost: Round --</span>
+              </div>
+            </div>
+            <div class="p-3 bg-slate-950/70 rounded-lg border border-slate-800/80 flex items-center justify-between gap-2">
+              <div>
+                <div class="font-bold text-sm text-white">Keeper 2</div>
+                <div class="text-xs text-slate-400">Position • Team</div>
+              </div>
+              <div class="flex items-center gap-2 text-right flex-shrink-0">
+                <span class="text-xs font-semibold px-2 py-1 bg-slate-800/90 text-amber-300 rounded border border-slate-700">1/3</span>
+                <span class="text-xs font-bold px-2 py-1 bg-slate-800/90 text-emerald-400 rounded border border-slate-700">Cost: Round --</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Team 11 (West) -->
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 hover:border-slate-700 transition-all shadow-md">
+          <div class="flex justify-between items-center mb-3 pb-2 border-b border-slate-800">
+            <div>
+              <h3 class="font-bold text-white">Will Vance</h3>
+              <span class="text-xs text-purple-400 font-semibold">Mr. Will & Borger Boys • West</span>
+            </div>
+            <span class="px-2 py-0.5 rounded text-xs font-semibold bg-emerald-500/20 text-emerald-300">Keepers</span>
+          </div>
+          <div class="space-y-3">
+            <div class="p-3 bg-slate-950/70 rounded-lg border border-slate-800/80 flex items-center justify-between gap-2">
+              <div>
+                <div class="font-bold text-sm text-white">Keeper 1</div>
+                <div class="text-xs text-slate-400">Position • Team</div>
+              </div>
+              <div class="flex items-center gap-2 text-right flex-shrink-0">
+                <span class="text-xs font-semibold px-2 py-1 bg-slate-800/90 text-amber-300 rounded border border-slate-700">1/3</span>
+                <span class="text-xs font-bold px-2 py-1 bg-slate-800/90 text-emerald-400 rounded border border-slate-700">Cost: Round --</span>
+              </div>
+            </div>
+            <div class="p-3 bg-slate-950/70 rounded-lg border border-slate-800/80 flex items-center justify-between gap-2">
+              <div>
+                <div class="font-bold text-sm text-white">Keeper 2</div>
+                <div class="text-xs text-slate-400">Position • Team</div>
+              </div>
+              <div class="flex items-center gap-2 text-right flex-shrink-0">
+                <span class="text-xs font-semibold px-2 py-1 bg-slate-800/90 text-amber-300 rounded border border-slate-700">1/3</span>
+                <span class="text-xs font-bold px-2 py-1 bg-slate-800/90 text-emerald-400 rounded border border-slate-700">Cost: Round --</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Team 12 (West) -->
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 hover:border-slate-700 transition-all shadow-md">
+          <div class="flex justify-between items-center mb-3 pb-2 border-b border-slate-800">
+            <div>
+              <h3 class="font-bold text-white">Ryan Kipping</h3>
+              <span class="text-xs text-purple-400 font-semibold">Just the Kip 🍆 • West</span>
+            </div>
+            <span class="px-2 py-0.5 rounded text-xs font-semibold bg-emerald-500/20 text-emerald-300">Keepers</span>
+          </div>
+          <div class="space-y-3">
+            <div class="p-3 bg-slate-950/70 rounded-lg border border-slate-800/80 flex items-center justify-between gap-2">
+              <div>
+                <div class="font-bold text-sm text-white">Keeper 1</div>
+                <div class="text-xs text-slate-400">Position • Team</div>
+              </div>
+              <div class="flex items-center gap-2 text-right flex-shrink-0">
+                <span class="text-xs font-semibold px-2 py-1 bg-slate-800/90 text-amber-300 rounded border border-slate-700">1/3</span>
+                <span class="text-xs font-bold px-2 py-1 bg-slate-800/90 text-emerald-400 rounded border border-slate-700">Cost: Round --</span>
+              </div>
+            </div>
+            <div class="p-3 bg-slate-950/70 rounded-lg border border-slate-800/80 flex items-center justify-between gap-2">
+              <div>
+                <div class="font-bold text-sm text-white">Keeper 2</div>
+                <div class="text-xs text-slate-400">Position • Team</div>
+              </div>
+              <div class="flex items-center gap-2 text-right flex-shrink-0">
+                <span class="text-xs font-semibold px-2 py-1 bg-slate-800/90 text-amber-300 rounded border border-slate-700">1/3</span>
+                <span class="text-xs font-bold px-2 py-1 bg-slate-800/90 text-emerald-400 rounded border border-slate-700">Cost: Round --</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- TAB 3: PREVIOUS YEAR RESULTS & ALL-TIME HISTORY -->
+    <!-- ======================================================== -->
+    <section id="tab-history" class="tab-content space-y-6">
+      
+      <!-- Trophy Case Summary & Titles Table -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
+        <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6">
+          <div>
+            <h2 class="text-xl font-bold text-white flex items-center gap-2">
+              <i data-lucide="crown" class="w-6 h-6 text-amber-400"></i>
+              Sugma League Hall of Champions (2021–2025)
+            </h2>
+            <p class="text-xs text-slate-400 mt-1">Official championship honor roll across 5 completed seasons</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="px-3 py-1.5 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-bold flex items-center gap-1.5">
+              <i data-lucide="trophy" class="w-4 h-4"></i> 5 Titles Awarded
+            </span>
+          </div>
+        </div>
+
+        <!-- Titles & Runners-Up Leaderboard Table -->
+        <div class="overflow-x-auto rounded-xl border border-slate-800">
+          <table class="w-full text-left text-sm">
+            <thead class="bg-slate-950/80 text-slate-400 text-xs uppercase tracking-wider border-b border-slate-800">
+              <tr>
+                <th class="py-3 px-4 font-semibold">Manager & Franchise</th>
+                <th class="py-3 px-4 font-semibold text-center">🏆 Titles</th>
+                <th class="py-3 px-4 font-semibold text-center">🥈 2nd Place</th>
+                <th class="py-3 px-4 font-semibold text-center">🥉 3rd Place</th>
+                <th class="py-3 px-4 font-semibold">Championship / Podium Years</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800/60 font-medium text-slate-200">
+              <!-- 1. Sufyan Pandit -->
+              <tr class="hover:bg-slate-800/40 bg-amber-950/10">
+                <td class="py-3 px-4">
+                  <div class="font-bold text-white flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-amber-400"></span> Sufyan Pandit
+                  </div>
+                  <div class="text-xs text-slate-400">CEO of Pubes</div>
+                </td>
+                <td class="py-3 px-4 text-center font-bold text-amber-400 text-base">2</td>
+                <td class="py-3 px-4 text-center text-slate-400">0</td>
+                <td class="py-3 px-4 text-center text-orange-400 font-semibold">1</td>
+                <td class="py-3 px-4 text-xs text-amber-300 font-semibold">Champion: 2021, 2022 • 3rd: 2024</td>
+              </tr>
+              <!-- 2. Will Vance -->
+              <tr class="hover:bg-slate-800/40">
+                <td class="py-3 px-4">
+                  <div class="font-bold text-white flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-amber-400"></span> Will Vance
+                  </div>
+                  <div class="text-xs text-slate-400">Mr. Will and the Borger Boys (Stafford)</div>
+                </td>
+                <td class="py-3 px-4 text-center font-bold text-amber-400 text-base">1</td>
+                <td class="py-3 px-4 text-center text-slate-300 font-semibold">1</td>
+                <td class="py-3 px-4 text-center text-orange-400 font-semibold">1</td>
+                <td class="py-3 px-4 text-xs text-amber-300 font-semibold">Champion: 2024 • 2nd: 2025 • 3rd: 2023</td>
+              </tr>
+              <!-- 3. Robert Garmoe -->
+              <tr class="hover:bg-slate-800/40">
+                <td class="py-3 px-4">
+                  <div class="font-bold text-white flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-amber-400"></span> Robert Garmoe
+                  </div>
+                  <div class="text-xs text-slate-400">Dirty Mike & Boys (J Williams/Minshew)</div>
+                </td>
+                <td class="py-3 px-4 text-center font-bold text-amber-400 text-base">1</td>
+                <td class="py-3 px-4 text-center text-slate-400">0</td>
+                <td class="py-3 px-4 text-center text-orange-400 font-semibold">2</td>
+                <td class="py-3 px-4 text-xs text-amber-300 font-semibold">Champion: 2025 • 3rd: 2021, 2022</td>
+              </tr>
+              <!-- 4. Ryan Kipping -->
+              <tr class="hover:bg-slate-800/40">
+                <td class="py-3 px-4">
+                  <div class="font-bold text-white flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-amber-400"></span> Ryan Kipping
+                  </div>
+                  <div class="text-xs text-slate-400">Just the Kip 🍆 (CeeDee's Nuts)</div>
+                </td>
+                <td class="py-3 px-4 text-center font-bold text-amber-400 text-base">1</td>
+                <td class="py-3 px-4 text-center text-slate-400">0</td>
+                <td class="py-3 px-4 text-center text-slate-400">0</td>
+                <td class="py-3 px-4 text-xs text-amber-300 font-semibold">Champion: 2023</td>
+              </tr>
+              <!-- 5. Jake Aron -->
+              <tr class="hover:bg-slate-800/40">
+                <td class="py-3 px-4">
+                  <div class="font-bold text-slate-200">Jake Aron</div>
+                  <div class="text-xs text-slate-400">Richard Cranium</div>
+                </td>
+                <td class="py-3 px-4 text-center text-slate-400">0</td>
+                <td class="py-3 px-4 text-center text-slate-200 font-bold text-base">2</td>
+                <td class="py-3 px-4 text-center text-slate-400">0</td>
+                <td class="py-3 px-4 text-xs text-slate-400">Runner-Up: 2021, 2022</td>
+              </tr>
+              <!-- 6. Spencer Poklop -->
+              <tr class="hover:bg-slate-800/40">
+                <td class="py-3 px-4">
+                  <div class="font-bold text-slate-200">Spencer Poklop</div>
+                  <div class="text-xs text-slate-400">Gator's B*tches (FIGHT / Darkness)</div>
+                </td>
+                <td class="py-3 px-4 text-center text-slate-400">0</td>
+                <td class="py-3 px-4 text-center text-slate-200 font-bold text-base">1</td>
+                <td class="py-3 px-4 text-center text-slate-400">0</td>
+                <td class="py-3 px-4 text-xs text-slate-400">Runner-Up: 2024</td>
+              </tr>
+              <!-- 7. Ron Demsher -->
+              <tr class="hover:bg-slate-800/40">
+                <td class="py-3 px-4">
+                  <div class="font-bold text-slate-200">Ron Demsher</div>
+                  <div class="text-xs text-slate-400">CHILIS BOX MUNCH (Not Who Koo)</div>
+                </td>
+                <td class="py-3 px-4 text-center text-slate-400">0</td>
+                <td class="py-3 px-4 text-center text-slate-200 font-bold text-base">1</td>
+                <td class="py-3 px-4 text-center text-slate-400">0</td>
+                <td class="py-3 px-4 text-xs text-slate-400">Runner-Up: 2023</td>
+              </tr>
+              <!-- 8. Austin Carmody -->
+              <tr class="hover:bg-slate-800/40">
+                <td class="py-3 px-4">
+                  <div class="font-bold text-slate-200">Austin Carmody</div>
+                  <div class="text-xs text-slate-400">BALLZ DEEP (Team Garmoe)</div>
+                </td>
+                <td class="py-3 px-4 text-center text-slate-400">0</td>
+                <td class="py-3 px-4 text-center text-slate-400">0</td>
+                <td class="py-3 px-4 text-center text-orange-400 font-semibold text-base">1</td>
+                <td class="py-3 px-4 text-xs text-slate-400">3rd: 2025</td>
+              </tr>
+              <!-- 9. Griffin Knoll -->
+              <tr class="hover:bg-slate-800/40">
+                <td class="py-3 px-4">
+                  <div class="font-bold text-slate-200">Griffin Knoll</div>
+                  <div class="text-xs text-slate-400">Fightin' Knollini (Do Win That)</div>
+                </td>
+                <td class="py-3 px-4 text-center text-slate-400">0</td>
+                <td class="py-3 px-4 text-center text-slate-400">0</td>
+                <td class="py-3 px-4 text-center text-slate-400">0</td>
+                <td class="py-3 px-4 text-xs text-slate-500">Best Finish: 4th (2022)</td>
+              </tr>
+              <!-- 10. Aaron Hausner -->
+              <tr class="hover:bg-slate-800/40">
+                <td class="py-3 px-4">
+                  <div class="font-bold text-slate-200">Aaron Hausner</div>
+                  <div class="text-xs text-slate-400">Take my Load (The Enforcer / Ayahuascans)</div>
+                </td>
+                <td class="py-3 px-4 text-center text-slate-400">0</td>
+                <td class="py-3 px-4 text-center text-slate-400">0</td>
+                <td class="py-3 px-4 text-center text-slate-400">0</td>
+                <td class="py-3 px-4 text-xs text-slate-500">Best Finish: 5th (2023)</td>
+              </tr>
+              <!-- 11. Joey Kratz -->
+              <tr class="hover:bg-slate-800/40">
+                <td class="py-3 px-4">
+                  <div class="font-bold text-slate-200">Joey Kratz</div>
+                  <div class="text-xs text-slate-400">The Kratz Bombz</div>
+                </td>
+                <td class="py-3 px-4 text-center text-slate-400">0</td>
+                <td class="py-3 px-4 text-center text-slate-400">0</td>
+                <td class="py-3 px-4 text-center text-slate-400">0</td>
+                <td class="py-3 px-4 text-xs text-slate-500">Best Finish: 6th (2021, 2025)</td>
+              </tr>
+              <!-- 12. Orin Gilchrest -->
+              <tr class="hover:bg-slate-800/40">
+                <td class="py-3 px-4">
+                  <div class="font-bold text-slate-200">Orin Gilchrest</div>
+                  <div class="text-xs text-slate-400">Boke Street Bandits</div>
+                </td>
+                <td class="py-3 px-4 text-center text-slate-400">0</td>
+                <td class="py-3 px-4 text-center text-slate-400">0</td>
+                <td class="py-3 px-4 text-center text-slate-400">0</td>
+                <td class="py-3 px-4 text-xs text-slate-500">Best Finish: 7th (2022, 2023, 2024)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Lifetime All-Time Franchise Records Table -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h3 class="text-lg font-bold text-white flex items-center gap-2">
+              <i data-lucide="bar-chart-2" class="w-5 h-5 text-emerald-400"></i>
+              All-Time Lifetime Records & Career Finishes (2021–2025)
+            </h3>
+            <p class="text-xs text-slate-400">Aggregated across all 5 seasons (70 regular season games per manager)</p>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto rounded-xl border border-slate-800">
+          <table class="w-full text-left text-sm">
+            <thead class="bg-slate-950/80 text-slate-400 text-xs uppercase tracking-wider border-b border-slate-800">
+              <tr>
+                <th class="py-3 px-4 font-semibold">Rank</th>
+                <th class="py-3 px-4 font-semibold">Manager & Team</th>
+                <th class="py-3 px-4 font-semibold text-center">Lifetime W-L</th>
+                <th class="py-3 px-4 font-semibold text-right">Win %</th>
+                <th class="py-3 px-4 font-semibold text-center">Best Finish</th>
+                <th class="py-3 px-4 font-semibold text-center">Worst Finish</th>
+                <th class="py-3 px-4 font-semibold text-center">Avg Finish</th>
+                <th class="py-3 px-4 font-semibold text-center">🏆 Titles</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800/60 font-medium text-slate-200">
+              <!-- 1. Sufyan Pandit (.571) -->
+              <tr class="hover:bg-slate-800/40 bg-emerald-950/10">
+                <td class="py-3.5 px-4 font-bold text-emerald-400 text-center w-12">1</td>
+                <td class="py-3.5 px-4">
+                  <div class="font-bold text-white">Sufyan Pandit</div>
+                  <div class="text-xs text-slate-400">CEO of Pubes • 2x Champ</div>
+                </td>
+                <td class="py-3.5 px-4 text-center font-bold text-white">40-30-0</td>
+                <td class="py-3.5 px-4 text-right text-emerald-400 font-bold">.571</td>
+                <td class="py-3.5 px-4 text-center"><span class="px-2 py-0.5 rounded text-xs bg-amber-500/20 text-amber-300 font-bold">1st (2x)</span></td>
+                <td class="py-3.5 px-4 text-center text-slate-400">4th</td>
+                <td class="py-3.5 px-4 text-center font-bold text-emerald-300">2.6</td>
+                <td class="py-3.5 px-4 text-center font-bold text-amber-400">2</td>
+              </tr>
+              <!-- 2. Robert Garmoe (.543) -->
+              <tr class="hover:bg-slate-800/40">
+                <td class="py-3.5 px-4 font-bold text-slate-400 text-center w-12">2</td>
+                <td class="py-3.5 px-4">
+                  <div class="font-bold text-white">Robert Garmoe</div>
+                  <div class="text-xs text-slate-400">Dirty Mike & Boys • 2025 Champ</div>
+                </td>
+                <td class="py-3.5 px-4 text-center font-bold text-slate-100">38-32-0</td>
+                <td class="py-3.5 px-4 text-right text-slate-300 font-semibold">.543</td>
+                <td class="py-3.5 px-4 text-center"><span class="px-2 py-0.5 rounded text-xs bg-amber-500/20 text-amber-300 font-bold">1st (2025)</span></td>
+                <td class="py-3.5 px-4 text-center text-slate-400">9th</td>
+                <td class="py-3.5 px-4 text-center font-semibold text-slate-200">4.8</td>
+                <td class="py-3.5 px-4 text-center font-bold text-amber-400">1</td>
+              </tr>
+              <!-- 3. Austin Carmody (.529, avg 6.8) -->
+              <tr class="hover:bg-slate-800/40">
+                <td class="py-3.5 px-4 font-bold text-slate-400 text-center w-12">3</td>
+                <td class="py-3.5 px-4">
+                  <div class="font-bold text-slate-200">Austin Carmody</div>
+                  <div class="text-xs text-slate-400">BALLZ DEEP • 3rd in 2025</div>
+                </td>
+                <td class="py-3.5 px-4 text-center font-medium text-slate-300">37-33-0</td>
+                <td class="py-3.5 px-4 text-right text-slate-400">.529</td>
+                <td class="py-3.5 px-4 text-center text-orange-400 font-semibold">3rd (2025)</td>
+                <td class="py-3.5 px-4 text-center text-slate-400">10th</td>
+                <td class="py-3.5 px-4 text-center text-slate-300">6.8</td>
+                <td class="py-3.5 px-4 text-center text-slate-500">0</td>
+              </tr>
+              <!-- 4. Griffin Knoll (.529, avg 7.2) -->
+              <tr class="hover:bg-slate-800/40">
+                <td class="py-3.5 px-4 font-bold text-slate-400 text-center w-12">4</td>
+                <td class="py-3.5 px-4">
+                  <div class="font-bold text-slate-200">Griffin Knoll</div>
+                  <div class="text-xs text-slate-400">Fightin' Knollini • North Div</div>
+                </td>
+                <td class="py-3.5 px-4 text-center font-medium text-slate-300">37-33-0</td>
+                <td class="py-3.5 px-4 text-right text-slate-400">.529</td>
+                <td class="py-3.5 px-4 text-center text-slate-300">4th</td>
+                <td class="py-3.5 px-4 text-center text-rose-400">11th</td>
+                <td class="py-3.5 px-4 text-center text-slate-300">7.2</td>
+                <td class="py-3.5 px-4 text-center text-slate-500">0</td>
+              </tr>
+              <!-- 5. Aaron Hausner (.529, avg 7.4) -->
+              <tr class="hover:bg-slate-800/40">
+                <td class="py-3.5 px-4 font-bold text-slate-400 text-center w-12">5</td>
+                <td class="py-3.5 px-4">
+                  <div class="font-bold text-slate-200">Aaron Hausner</div>
+                  <div class="text-xs text-slate-400">Take my Load • South Div</div>
+                </td>
+                <td class="py-3.5 px-4 text-center font-medium text-slate-300">37-33-0</td>
+                <td class="py-3.5 px-4 text-right text-slate-400">.529</td>
+                <td class="py-3.5 px-4 text-center text-slate-300">5th</td>
+                <td class="py-3.5 px-4 text-center text-slate-400">10th</td>
+                <td class="py-3.5 px-4 text-center text-slate-300">7.4</td>
+                <td class="py-3.5 px-4 text-center text-slate-500">0</td>
+              </tr>
+              <!-- 6. Orin Gilchrest (.529, avg 8.0) -->
+              <tr class="hover:bg-slate-800/40">
+                <td class="py-3.5 px-4 font-bold text-slate-400 text-center w-12">6</td>
+                <td class="py-3.5 px-4">
+                  <div class="font-bold text-slate-200">Orin Gilchrest</div>
+                  <div class="text-xs text-slate-400">Boke Street Bandits • East Div</div>
+                </td>
+                <td class="py-3.5 px-4 text-center font-medium text-slate-300">37-33-0</td>
+                <td class="py-3.5 px-4 text-right text-slate-400">.529</td>
+                <td class="py-3.5 px-4 text-center text-slate-300">7th</td>
+                <td class="py-3.5 px-4 text-center text-slate-400">10th</td>
+                <td class="py-3.5 px-4 text-center text-slate-300">8.0</td>
+                <td class="py-3.5 px-4 text-center text-slate-500">0</td>
+              </tr>
+              <!-- 7. Ryan Kipping (.514) -->
+              <tr class="hover:bg-slate-800/40">
+                <td class="py-3.5 px-4 font-bold text-slate-400 text-center w-12">7</td>
+                <td class="py-3.5 px-4">
+                  <div class="font-bold text-white">Ryan Kipping</div>
+                  <div class="text-xs text-slate-400">Just the Kip 🍆 • 2023 Champ</div>
+                </td>
+                <td class="py-3.5 px-4 text-center font-bold text-slate-100">36-34-0</td>
+                <td class="py-3.5 px-4 text-right text-slate-300 font-semibold">.514</td>
+                <td class="py-3.5 px-4 text-center"><span class="px-2 py-0.5 rounded text-xs bg-amber-500/20 text-amber-300 font-bold">1st (2023)</span></td>
+                <td class="py-3.5 px-4 text-center text-rose-400">12th</td>
+                <td class="py-3.5 px-4 text-center font-semibold text-slate-200">6.4</td>
+                <td class="py-3.5 px-4 text-center font-bold text-amber-400">1</td>
+              </tr>
+              <!-- 8. Will Vance (.500) -->
+              <tr class="hover:bg-slate-800/40">
+                <td class="py-3.5 px-4 font-bold text-slate-400 text-center w-12">8</td>
+                <td class="py-3.5 px-4">
+                  <div class="font-bold text-white">Will Vance</div>
+                  <div class="text-xs text-slate-400">Mr. Will & Borger Boys • 2024 Champ</div>
+                </td>
+                <td class="py-3.5 px-4 text-center font-bold text-slate-100">35-35-0</td>
+                <td class="py-3.5 px-4 text-right text-slate-300 font-semibold">.500</td>
+                <td class="py-3.5 px-4 text-center"><span class="px-2 py-0.5 rounded text-xs bg-amber-500/20 text-amber-300 font-bold">1st (2024)</span></td>
+                <td class="py-3.5 px-4 text-center text-rose-400">12th</td>
+                <td class="py-3.5 px-4 text-center font-semibold text-slate-200">5.2</td>
+                <td class="py-3.5 px-4 text-center font-bold text-amber-400">1</td>
+              </tr>
+              <!-- 9. Jake Aron (.486) -->
+              <tr class="hover:bg-slate-800/40">
+                <td class="py-3.5 px-4 font-bold text-slate-400 text-center w-12">9</td>
+                <td class="py-3.5 px-4">
+                  <div class="font-bold text-slate-200">Jake Aron</div>
+                  <div class="text-xs text-slate-400">Richard Cranium • 2x Runner-Up</div>
+                </td>
+                <td class="py-3.5 px-4 text-center font-medium text-slate-300">34-36-0</td>
+                <td class="py-3.5 px-4 text-right text-slate-400">.486</td>
+                <td class="py-3.5 px-4 text-center"><span class="px-2 py-0.5 rounded text-xs bg-slate-800 text-slate-300 font-semibold">2nd (2x)</span></td>
+                <td class="py-3.5 px-4 text-center text-slate-400">10th</td>
+                <td class="py-3.5 px-4 text-center font-semibold text-slate-300">5.8</td>
+                <td class="py-3.5 px-4 text-center text-slate-500">0</td>
+              </tr>
+              <!-- 10. Spencer Poklop (.471) -->
+              <tr class="hover:bg-slate-800/40">
+                <td class="py-3.5 px-4 font-bold text-slate-400 text-center w-12">10</td>
+                <td class="py-3.5 px-4">
+                  <div class="font-bold text-slate-200">Spencer Poklop</div>
+                  <div class="text-xs text-slate-400">Gator's B*tches • 2nd in 2024</div>
+                </td>
+                <td class="py-3.5 px-4 text-center font-medium text-slate-300">33-37-0</td>
+                <td class="py-3.5 px-4 text-right text-slate-400">.471</td>
+                <td class="py-3.5 px-4 text-center"><span class="px-2 py-0.5 rounded text-xs bg-slate-800 text-slate-300 font-semibold">2nd (2024)</span></td>
+                <td class="py-3.5 px-4 text-center text-rose-400">12th</td>
+                <td class="py-3.5 px-4 text-center text-slate-300">8.0</td>
+                <td class="py-3.5 px-4 text-center text-slate-500">0</td>
+              </tr>
+              <!-- 11. Joey Kratz (.457) -->
+              <tr class="hover:bg-slate-800/40">
+                <td class="py-3.5 px-4 font-bold text-slate-400 text-center w-12">11</td>
+                <td class="py-3.5 px-4">
+                  <div class="font-bold text-slate-200">Joey Kratz</div>
+                  <div class="text-xs text-slate-400">The Kratz Bombz • East Div</div>
+                </td>
+                <td class="py-3.5 px-4 text-center font-medium text-slate-300">32-38-0</td>
+                <td class="py-3.5 px-4 text-right text-slate-400">.457</td>
+                <td class="py-3.5 px-4 text-center text-slate-300">6th</td>
+                <td class="py-3.5 px-4 text-center text-rose-400">12th</td>
+                <td class="py-3.5 px-4 text-center text-slate-300">8.0</td>
+                <td class="py-3.5 px-4 text-center text-slate-500">0</td>
+              </tr>
+              <!-- 12. Ron Demsher (.443) -->
+              <tr class="hover:bg-slate-800/40">
+                <td class="py-3.5 px-4 font-bold text-slate-400 text-center w-12">12</td>
+                <td class="py-3.5 px-4">
+                  <div class="font-bold text-slate-200">Ron Demsher</div>
+                  <div class="text-xs text-slate-400">CHILIS BOX MUNCH • 2nd in 2023</div>
+                </td>
+                <td class="py-3.5 px-4 text-center font-medium text-slate-300">31-39-0</td>
+                <td class="py-3.5 px-4 text-right text-slate-400">.443</td>
+                <td class="py-3.5 px-4 text-center"><span class="px-2 py-0.5 rounded text-xs bg-slate-800 text-slate-300 font-semibold">2nd (2023)</span></td>
+                <td class="py-3.5 px-4 text-center text-rose-400">12th</td>
+                <td class="py-3.5 px-4 text-center text-slate-300">7.0</td>
+                <td class="py-3.5 px-4 text-center text-slate-500">0</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Year-By-Year Season Archives (2025 to 2021) -->
+      <div class="space-y-5">
+        <h3 class="text-lg font-bold text-white flex items-center gap-2">
+          <i data-lucide="calendar" class="w-5 h-5 text-emerald-400"></i>
+          Year-by-Year Season Recaps (2021–2025)
+        </h3>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          
+          <!-- 2025 Season -->
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 relative overflow-hidden shadow-lg">
+            <div class="absolute -right-3 -top-3 w-16 h-16 bg-amber-500/10 rounded-full flex items-end justify-start p-2 text-amber-400 font-black text-xs">
+              2025
+            </div>
+            <div class="text-xs font-bold text-amber-400 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+              <i data-lucide="trophy" class="w-3.5 h-3.5"></i> 2025 Season
+            </div>
+            <div class="space-y-2.5 text-sm">
+              <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+                <span class="text-slate-400 flex items-center gap-1.5"><i data-lucide="award" class="w-4 h-4 text-amber-400"></i> 1st (Champion)</span>
+                <span class="font-bold text-white">Robert Garmoe (9-5)</span>
+              </div>
+              <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+                <span class="text-slate-400 flex items-center gap-1.5"><i data-lucide="medal" class="w-4 h-4 text-slate-300"></i> 2nd (Runner-Up)</span>
+                <span class="font-medium text-slate-300">Will Vance (8-6)</span>
+              </div>
+              <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+                <span class="text-slate-400 flex items-center gap-1.5"><i data-lucide="medal" class="w-4 h-4 text-orange-400"></i> 3rd Place</span>
+                <span class="font-medium text-slate-300">Austin Carmody (9-5)</span>
+              </div>
+              <div class="flex items-center justify-between text-rose-400 pt-1">
+                <span class="flex items-center gap-1.5"><i data-lucide="skull" class="w-4 h-4 text-rose-400"></i> 12th Place</span>
+                <span class="font-bold text-rose-300">Ryan Kipping (4-10)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2024 Season -->
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 relative overflow-hidden shadow-lg">
+            <div class="absolute -right-3 -top-3 w-16 h-16 bg-slate-800/40 rounded-full flex items-end justify-start p-2 text-slate-400 font-black text-xs">
+              2024
+            </div>
+            <div class="text-xs font-bold text-slate-300 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+              <i data-lucide="trophy" class="w-3.5 h-3.5"></i> 2024 Season
+            </div>
+            <div class="space-y-2.5 text-sm">
+              <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+                <span class="text-slate-400 flex items-center gap-1.5"><i data-lucide="award" class="w-4 h-4 text-amber-400"></i> 1st (Champion)</span>
+                <span class="font-bold text-white">Will Vance (10-4)</span>
+              </div>
+              <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+                <span class="text-slate-400 flex items-center gap-1.5"><i data-lucide="medal" class="w-4 h-4 text-slate-300"></i> 2nd (Runner-Up)</span>
+                <span class="font-medium text-slate-300">Spencer Poklop (9-5)</span>
+              </div>
+              <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+                <span class="text-slate-400 flex items-center gap-1.5"><i data-lucide="medal" class="w-4 h-4 text-orange-400"></i> 3rd Place</span>
+                <span class="font-medium text-slate-300">Sufyan Pandit (9-5)</span>
+              </div>
+              <div class="flex items-center justify-between text-rose-400 pt-1">
+                <span class="flex items-center gap-1.5"><i data-lucide="skull" class="w-4 h-4 text-rose-400"></i> 12th Place</span>
+                <span class="font-bold text-rose-300">Joey Kratz (2-12)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2023 Season -->
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 relative overflow-hidden shadow-lg">
+            <div class="absolute -right-3 -top-3 w-16 h-16 bg-slate-800/40 rounded-full flex items-end justify-start p-2 text-slate-400 font-black text-xs">
+              2023
+            </div>
+            <div class="text-xs font-bold text-slate-300 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+              <i data-lucide="trophy" class="w-3.5 h-3.5"></i> 2023 Season
+            </div>
+            <div class="space-y-2.5 text-sm">
+              <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+                <span class="text-slate-400 flex items-center gap-1.5"><i data-lucide="award" class="w-4 h-4 text-amber-400"></i> 1st (Champion)</span>
+                <span class="font-bold text-white">Ryan Kipping (7-7)</span>
+              </div>
+              <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+                <span class="text-slate-400 flex items-center gap-1.5"><i data-lucide="medal" class="w-4 h-4 text-slate-300"></i> 2nd (Runner-Up)</span>
+                <span class="font-medium text-slate-300">Ron Demsher (8-6)</span>
+              </div>
+              <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+                <span class="text-slate-400 flex items-center gap-1.5"><i data-lucide="medal" class="w-4 h-4 text-orange-400"></i> 3rd Place</span>
+                <span class="font-medium text-slate-300">Will Vance (6-8)</span>
+              </div>
+              <div class="flex items-center justify-between text-rose-400 pt-1">
+                <span class="flex items-center gap-1.5"><i data-lucide="skull" class="w-4 h-4 text-rose-400"></i> 12th Place</span>
+                <span class="font-bold text-rose-300">Spencer Poklop (5-9)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2022 Season -->
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 relative overflow-hidden shadow-lg">
+            <div class="absolute -right-3 -top-3 w-16 h-16 bg-slate-800/40 rounded-full flex items-end justify-start p-2 text-slate-400 font-black text-xs">
+              2022
+            </div>
+            <div class="text-xs font-bold text-slate-300 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+              <i data-lucide="trophy" class="w-3.5 h-3.5"></i> 2022 Season
+            </div>
+            <div class="space-y-2.5 text-sm">
+              <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+                <span class="text-slate-400 flex items-center gap-1.5"><i data-lucide="award" class="w-4 h-4 text-amber-400"></i> 1st (Champion)</span>
+                <span class="font-bold text-white">Sufyan Pandit (7-7)</span>
+              </div>
+              <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+                <span class="text-slate-400 flex items-center gap-1.5"><i data-lucide="medal" class="w-4 h-4 text-slate-300"></i> 2nd (Runner-Up)</span>
+                <span class="font-medium text-slate-300">Jake Aron (8-6)</span>
+              </div>
+              <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+                <span class="text-slate-400 flex items-center gap-1.5"><i data-lucide="medal" class="w-4 h-4 text-orange-400"></i> 3rd Place</span>
+                <span class="font-medium text-slate-300">Robert Garmoe (7-7)</span>
+              </div>
+              <div class="flex items-center justify-between text-rose-400 pt-1">
+                <span class="flex items-center gap-1.5"><i data-lucide="skull" class="w-4 h-4 text-rose-400"></i> 12th Place</span>
+                <span class="font-bold text-rose-300">Will Vance (3-11)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2021 Season -->
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 relative overflow-hidden shadow-lg">
+            <div class="absolute -right-3 -top-3 w-16 h-16 bg-slate-800/40 rounded-full flex items-end justify-start p-2 text-slate-400 font-black text-xs">
+              2021
+            </div>
+            <div class="text-xs font-bold text-slate-300 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+              <i data-lucide="trophy" class="w-3.5 h-3.5"></i> 2021 Season
+            </div>
+            <div class="space-y-2.5 text-sm">
+              <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+                <span class="text-slate-400 flex items-center gap-1.5"><i data-lucide="award" class="w-4 h-4 text-amber-400"></i> 1st (Champion)</span>
+                <span class="font-bold text-white">Sufyan Pandit (9-5)</span>
+              </div>
+              <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+                <span class="text-slate-400 flex items-center gap-1.5"><i data-lucide="medal" class="w-4 h-4 text-slate-300"></i> 2nd (Runner-Up)</span>
+                <span class="font-medium text-slate-300">Jake Aron (8-6)</span>
+              </div>
+              <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+                <span class="text-slate-400 flex items-center gap-1.5"><i data-lucide="medal" class="w-4 h-4 text-orange-400"></i> 3rd Place</span>
+                <span class="font-medium text-slate-300">Robert Garmoe (10-4)</span>
+              </div>
+              <div class="flex items-center justify-between text-rose-400 pt-1">
+                <span class="flex items-center gap-1.5"><i data-lucide="skull" class="w-4 h-4 text-rose-400"></i> 12th Place</span>
+                <span class="font-bold text-rose-300">Ron Demsher (1-13)</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- TAB 4: LEAGUE RULES / CONSTITUTION -->
+    <!-- ======================================================== -->
+    <section id="tab-rules" class="tab-content space-y-6">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
+        <h2 class="text-xl font-bold text-white flex items-center gap-2 mb-2">
+          <i data-lucide="book-open-check" class="w-6 h-6 text-emerald-400"></i>
+          Official League Constitution & Bylaws
+        </h2>
+        <p class="text-xs text-slate-400 mb-6">Last updated: Pre-season 2026 • Approved by unanimous league vote</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+          
+          <!-- Section 1 -->
+          <div class="p-5 bg-slate-950/70 border border-slate-800/90 rounded-xl space-y-3">
+            <h3 class="font-bold text-emerald-400 flex items-center gap-2 text-base">
+              <i data-lucide="dollar-sign" class="w-4 h-4"></i> 1. Buy-In & Payout Structure
+            </h3>
+            <ul class="space-y-2 text-slate-300 list-disc list-inside">
+              <li><strong>Buy-In:</strong> $110 per manager ($1,320 total pot across 12 teams).</li>
+              <li><strong>1st Place (Champion):</strong> $750 + League Trophy</li>
+              <li><strong>2nd Place (Runner-Up):</strong> $300</li>
+              <li><strong>3rd Place:</strong> $150</li>
+              <li><strong>Survival Side Game Winner:</strong> $120</li>
+            </ul>
+          </div>
+
+          <!-- Section 2 -->
+          <div class="p-5 bg-slate-950/70 border border-slate-800/90 rounded-xl space-y-3">
+            <h3 class="font-bold text-emerald-400 flex items-center gap-2 text-base">
+              <i data-lucide="shield" class="w-4 h-4"></i> 2. Keeper Rules
+            </h3>
+            <ul class="space-y-2 text-slate-300 list-disc list-inside">
+              <li><strong>Max Keepers:</strong> Up to 2 players per team per year.</li>
+              <li><strong>Draft Cost:</strong> Exactly the prior year's draft round (e.g. drafted in Round 6 = kept for a Round 6 pick).</li>
+              <li><strong>Free Agent / Waiver Pickups:</strong> Cost a Round 10 pick.</li>
+              <li><strong>Term Limit:</strong> Max 3 consecutive keeper years. <em>Exception:</em> Up to 5 consecutive years if player was originally drafted after Round 5 (Round 6 or later).</li>
+            </ul>
+          </div>
+
+          <!-- Section 3 -->
+          <div class="p-5 bg-slate-950/70 border border-slate-800/90 rounded-xl space-y-3">
+            <h3 class="font-bold text-emerald-400 flex items-center gap-2 text-base">
+              <i data-lucide="refresh-cw" class="w-4 h-4"></i> 3. Trades & Waivers
+            </h3>
+            <ul class="space-y-2 text-slate-300 list-disc list-inside">
+              <li><strong>Waiver System:</strong> FAAB ($25 budget for the season, $1 minimum bid). Continuous waivers run Wed–Sun mornings.</li>
+              <li><strong>Draft Pick Trading:</strong> Future draft picks can be included in trades, but strictly limited to a maximum of one pick per side per trade.</li>
+              <li><strong>Trade Deadline:</strong> November 18, 2026 at 11:59 PM EST.</li>
+              <li><strong>Trade Review:</strong> Commissioner approval within 24h. Vetoes only used for proven collusion or league-breaking trades.</li>
+            </ul>
+          </div>
+
+          <!-- Section 4 -->
+          <div class="p-5 bg-slate-950/70 border border-slate-800/90 rounded-xl space-y-3">
+            <h3 class="font-bold text-emerald-400 flex items-center gap-2 text-base">
+              <i data-lucide="trophy" class="w-4 h-4"></i> 4. Playoffs & Post-Season Structure
+            </h3>
+            <ul class="space-y-2 text-slate-300 list-disc list-inside">
+              <li><strong>Playoff Schedule:</strong> Weeks 14–16 (Top 8 Teams).</li>
+              <li><strong>Seeding:</strong> Seeds 1–4 are Division Winners; Seeds 5–8 are Wild Cards.</li>
+              <li><strong>Quarterfinal Matchups:</strong> #1 vs #8, #2 vs #7, #3 vs #6, and #4 vs #5.</li>
+              <li><strong>Home Field Advantage:</strong> Higher seeds start each playoff matchup with a +5 point bonus.</li>
+              <li><strong>Non-Playoff Teams (Seeds 9–12):</strong> Season concludes at Week 13 (no consolation bracket).</li>
+            </ul>
+          </div>
+
+          <!-- Section 5 -->
+          <div class="p-5 bg-slate-950/70 border border-slate-800/90 rounded-xl space-y-3 md:col-span-2">
+            <h3 class="font-bold text-emerald-400 flex items-center gap-2 text-base">
+              <i data-lucide="sparkles" class="w-4 h-4"></i> 5. Bonus Wins (2 Games Per Week)
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-slate-300">
+              <div>
+                <h4 class="font-semibold text-white mb-1">1. Head-to-Head Matchup:</h4>
+                <p>Standard 1-on-1 weekly game against your scheduled league opponent (1 Win or 1 Loss).</p>
+              </div>
+              <div>
+                <h4 class="font-semibold text-white mb-1">2. League Scoring Median (Top 6 / Bottom 6):</h4>
+                <p>You receive an additional <strong>Win</strong> if your score ranks in the <strong>Top 6</strong> of the league for the week, and an additional <strong>Loss</strong> if your score ranks in the <strong>Bottom 6</strong>.</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-slate-800 bg-slate-900/60 py-6 text-center text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+      <div>Sugma League • Fantasy Football Hub</div>
+      <div>ESPN 12-Team Keeper League</div>
+    </div>
+  </footer>
+
+  <!-- SCRIPT FOR TAB SWITCHING & LUCIDE ICONS & LIVE EDIT -->
+  <script>
+    lucide.createIcons();
+
+    let isEditing = false;
+
+    function toggleEditMode() {
+      isEditing = !isEditing;
+      document.body.contentEditable = isEditing ? "true" : "false";
+
+      const btn = document.getElementById('edit-mode-btn');
+      const btnText = document.getElementById('edit-btn-text');
+
+      if (isEditing) {
+        btn.classList.remove('bg-amber-500/20', 'text-amber-300', 'border-amber-500/30');
+        btn.classList.add('bg-emerald-500', 'text-slate-950', 'border-emerald-400', 'font-bold');
+        btnText.innerText = 'Editing (Click to Lock)';
+      } else {
+        btn.classList.remove('bg-emerald-500', 'text-slate-950', 'border-emerald-400', 'font-bold');
+        btn.classList.add('bg-amber-500/20', 'text-amber-300', 'border-amber-500/30');
+        btnText.innerText = 'Edit Live';
+      }
+    }
+
+    function switchTab(tabId) {
+      if (isEditing) toggleEditMode();
+      // Hide all tabs
+      document.querySelectorAll('.tab-content').forEach(el => {
+        el.classList.remove('active');
+      });
+      // Show selected tab
+      const target = document.getElementById('tab-' + tabId);
+      if (target) target.classList.add('active');
+
+      // Update button styles
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('bg-emerald-500', 'text-slate-950', 'shadow-sm');
+        btn.classList.add('text-slate-300', 'hover:text-white', 'hover:bg-slate-800');
+      });
+
+      const activeBtn = document.getElementById('nav-' + tabId);
+      if (activeBtn) {
+        activeBtn.classList.add('bg-emerald-500', 'text-slate-950', 'shadow-sm');
+        activeBtn.classList.remove('text-slate-300', 'hover:text-white', 'hover:bg-slate-800');
+      }
+
+      lucide.createIcons();
+    }
+  </script>
+</body>
+</html>
