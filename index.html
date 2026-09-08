@@ -69,6 +69,9 @@
             <button onclick="switchTab('keepers')" id="nav-keepers" class="tab-btn px-3.5 py-2 text-sm font-medium rounded-lg transition-colors flex items-center gap-2 text-slate-300 hover:text-white hover:bg-slate-800">
               <i data-lucide="lock" class="w-4 h-4"></i> Keepers
             </button>
+            <button onclick="switchTab('survival')" id="nav-survival" class="tab-btn px-3.5 py-2 text-sm font-medium rounded-lg transition-colors flex items-center gap-2 text-slate-300 hover:text-white hover:bg-slate-800">
+              <i data-lucide="flame" class="w-4 h-4"></i> Survival
+            </button>
             <button onclick="switchTab('history')" id="nav-history" class="tab-btn px-3.5 py-2 text-sm font-medium rounded-lg transition-colors flex items-center gap-2 text-slate-300 hover:text-white hover:bg-slate-800">
               <i data-lucide="history" class="w-4 h-4"></i> History
             </button>
@@ -754,7 +757,217 @@
     </section>
 
     <!-- ======================================================== -->
-    <!-- TAB 3: PREVIOUS YEAR RESULTS & ALL-TIME HISTORY -->
+    <!-- TAB: SURVIVAL SIDE GAME -->
+    <!-- ======================================================== -->
+    <section id="tab-survival" class="tab-content space-y-6">
+      
+      <!-- Survival Banner -->
+      <div class="bg-gradient-to-r from-slate-900 to-slate-800 border border-slate-800 rounded-2xl p-6 shadow-xl">
+        <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div>
+            <h2 class="text-xl font-bold text-white flex items-center gap-2">
+              <i data-lucide="flame" class="w-6 h-6 text-amber-400"></i>
+              Weekly Survival Side Game
+            </h2>
+            <p class="text-sm text-slate-400 mt-1">
+              $120 Winner-Take-All Pot • The team with the lowest points each week is eliminated until 1 manager survives!
+            </p>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="px-3.5 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> 12 / 12 Alive (Pre-Season)
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Survival Status Board Table -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
+        <div class="p-5 border-b border-slate-800 flex items-center justify-between">
+          <h3 class="text-base font-bold text-white flex items-center gap-2">
+            <i data-lucide="shield-alert" class="w-5 h-5 text-emerald-400"></i>
+            Survival Elimination Board
+          </h3>
+          <span class="text-xs text-slate-400 font-medium">Week 1 Elimination starts Week 1 kickoff</span>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm">
+            <thead class="bg-slate-950/80 text-slate-400 text-xs uppercase tracking-wider border-b border-slate-800">
+              <tr>
+                <th class="py-3.5 px-4 font-semibold w-16 text-center">#</th>
+                <th class="py-3.5 px-4 font-semibold">Manager</th>
+                <th class="py-3.5 px-4 font-semibold">Franchise</th>
+                <th class="py-3.5 px-4 font-semibold text-center w-28">Alive</th>
+                <th class="py-3.5 px-4 font-semibold text-center w-28">Eliminated</th>
+                <th class="py-3.5 px-4 font-semibold text-center w-36">Status</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800/60 font-medium text-slate-200">
+              <!-- 1. Ron Demsher -->
+              <tr class="hover:bg-slate-800/40">
+                <td class="py-3.5 px-4 text-center font-bold text-slate-400">1</td>
+                <td class="py-3.5 px-4 font-bold text-white">Ron Demsher</td>
+                <td class="py-3.5 px-4 text-slate-300">CHILIS BOX MUNCH</td>
+                <td class="py-3.5 px-4 text-center">
+                  <span class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-emerald-500/20 text-emerald-400 font-black text-sm border border-emerald-500/30">X</span>
+                </td>
+                <td class="py-3.5 px-4 text-center text-slate-600 font-bold">--</td>
+                <td class="py-3.5 px-4 text-center">
+                  <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Alive</span>
+                </td>
+              </tr>
+              <!-- 2. Sufyan Pandit -->
+              <tr class="hover:bg-slate-800/40">
+                <td class="py-3.5 px-4 text-center font-bold text-slate-400">2</td>
+                <td class="py-3.5 px-4 font-bold text-white">Sufyan Pandit</td>
+                <td class="py-3.5 px-4 text-slate-300">CEO of Pubes</td>
+                <td class="py-3.5 px-4 text-center">
+                  <span class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-emerald-500/20 text-emerald-400 font-black text-sm border border-emerald-500/30">X</span>
+                </td>
+                <td class="py-3.5 px-4 text-center text-slate-600 font-bold">--</td>
+                <td class="py-3.5 px-4 text-center">
+                  <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Alive</span>
+                </td>
+              </tr>
+              <!-- 3. Griffin Knoll -->
+              <tr class="hover:bg-slate-800/40">
+                <td class="py-3.5 px-4 text-center font-bold text-slate-400">3</td>
+                <td class="py-3.5 px-4 font-bold text-white">Griffin Knoll</td>
+                <td class="py-3.5 px-4 text-slate-300">Fightin' Knollini</td>
+                <td class="py-3.5 px-4 text-center">
+                  <span class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-emerald-500/20 text-emerald-400 font-black text-sm border border-emerald-500/30">X</span>
+                </td>
+                <td class="py-3.5 px-4 text-center text-slate-600 font-bold">--</td>
+                <td class="py-3.5 px-4 text-center">
+                  <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Alive</span>
+                </td>
+              </tr>
+              <!-- 4. Austin Carmody -->
+              <tr class="hover:bg-slate-800/40">
+                <td class="py-3.5 px-4 text-center font-bold text-slate-400">4</td>
+                <td class="py-3.5 px-4 font-bold text-white">Austin Carmody</td>
+                <td class="py-3.5 px-4 text-slate-300">BALLZ DEEP</td>
+                <td class="py-3.5 px-4 text-center">
+                  <span class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-emerald-500/20 text-emerald-400 font-black text-sm border border-emerald-500/30">X</span>
+                </td>
+                <td class="py-3.5 px-4 text-center text-slate-600 font-bold">--</td>
+                <td class="py-3.5 px-4 text-center">
+                  <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Alive</span>
+                </td>
+              </tr>
+              <!-- 5. Aaron Hausner -->
+              <tr class="hover:bg-slate-800/40">
+                <td class="py-3.5 px-4 text-center font-bold text-slate-400">5</td>
+                <td class="py-3.5 px-4 font-bold text-white">Aaron Hausner</td>
+                <td class="py-3.5 px-4 text-slate-300">Take my Load</td>
+                <td class="py-3.5 px-4 text-center">
+                  <span class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-emerald-500/20 text-emerald-400 font-black text-sm border border-emerald-500/30">X</span>
+                </td>
+                <td class="py-3.5 px-4 text-center text-slate-600 font-bold">--</td>
+                <td class="py-3.5 px-4 text-center">
+                  <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Alive</span>
+                </td>
+              </tr>
+              <!-- 6. Jake Aron -->
+              <tr class="hover:bg-slate-800/40">
+                <td class="py-3.5 px-4 text-center font-bold text-slate-400">6</td>
+                <td class="py-3.5 px-4 font-bold text-white">Jake Aron</td>
+                <td class="py-3.5 px-4 text-slate-300">Richard Cranium</td>
+                <td class="py-3.5 px-4 text-center">
+                  <span class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-emerald-500/20 text-emerald-400 font-black text-sm border border-emerald-500/30">X</span>
+                </td>
+                <td class="py-3.5 px-4 text-center text-slate-600 font-bold">--</td>
+                <td class="py-3.5 px-4 text-center">
+                  <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Alive</span>
+                </td>
+              </tr>
+              <!-- 7. Joey Kratz -->
+              <tr class="hover:bg-slate-800/40">
+                <td class="py-3.5 px-4 text-center font-bold text-slate-400">7</td>
+                <td class="py-3.5 px-4 font-bold text-white">Joey Kratz</td>
+                <td class="py-3.5 px-4 text-slate-300">The Kratz Bombz</td>
+                <td class="py-3.5 px-4 text-center">
+                  <span class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-emerald-500/20 text-emerald-400 font-black text-sm border border-emerald-500/30">X</span>
+                </td>
+                <td class="py-3.5 px-4 text-center text-slate-600 font-bold">--</td>
+                <td class="py-3.5 px-4 text-center">
+                  <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Alive</span>
+                </td>
+              </tr>
+              <!-- 8. Orin Gilchrest -->
+              <tr class="hover:bg-slate-800/40">
+                <td class="py-3.5 px-4 text-center font-bold text-slate-400">8</td>
+                <td class="py-3.5 px-4 font-bold text-white">Orin Gilchrest</td>
+                <td class="py-3.5 px-4 text-slate-300">Boke Street Bandits</td>
+                <td class="py-3.5 px-4 text-center">
+                  <span class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-emerald-500/20 text-emerald-400 font-black text-sm border border-emerald-500/30">X</span>
+                </td>
+                <td class="py-3.5 px-4 text-center text-slate-600 font-bold">--</td>
+                <td class="py-3.5 px-4 text-center">
+                  <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Alive</span>
+                </td>
+              </tr>
+              <!-- 9. Robert Garmoe -->
+              <tr class="hover:bg-slate-800/40">
+                <td class="py-3.5 px-4 text-center font-bold text-slate-400">9</td>
+                <td class="py-3.5 px-4 font-bold text-white">Robert Garmoe</td>
+                <td class="py-3.5 px-4 text-slate-300">Dirty Mike and the Boys</td>
+                <td class="py-3.5 px-4 text-center">
+                  <span class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-emerald-500/20 text-emerald-400 font-black text-sm border border-emerald-500/30">X</span>
+                </td>
+                <td class="py-3.5 px-4 text-center text-slate-600 font-bold">--</td>
+                <td class="py-3.5 px-4 text-center">
+                  <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Alive</span>
+                </td>
+              </tr>
+              <!-- 10. Spencer Poklop -->
+              <tr class="hover:bg-slate-800/40">
+                <td class="py-3.5 px-4 text-center font-bold text-slate-400">10</td>
+                <td class="py-3.5 px-4 font-bold text-white">Spencer Poklop</td>
+                <td class="py-3.5 px-4 text-slate-300">Gator's B*tches</td>
+                <td class="py-3.5 px-4 text-center">
+                  <span class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-emerald-500/20 text-emerald-400 font-black text-sm border border-emerald-500/30">X</span>
+                </td>
+                <td class="py-3.5 px-4 text-center text-slate-600 font-bold">--</td>
+                <td class="py-3.5 px-4 text-center">
+                  <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Alive</span>
+                </td>
+              </tr>
+              <!-- 11. Will Vance -->
+              <tr class="hover:bg-slate-800/40">
+                <td class="py-3.5 px-4 text-center font-bold text-slate-400">11</td>
+                <td class="py-3.5 px-4 font-bold text-white">Will Vance</td>
+                <td class="py-3.5 px-4 text-slate-300">Mr. Will and the Borger Boys</td>
+                <td class="py-3.5 px-4 text-center">
+                  <span class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-emerald-500/20 text-emerald-400 font-black text-sm border border-emerald-500/30">X</span>
+                </td>
+                <td class="py-3.5 px-4 text-center text-slate-600 font-bold">--</td>
+                <td class="py-3.5 px-4 text-center">
+                  <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Alive</span>
+                </td>
+              </tr>
+              <!-- 12. Ryan Kipping -->
+              <tr class="hover:bg-slate-800/40">
+                <td class="py-3.5 px-4 text-center font-bold text-slate-400">12</td>
+                <td class="py-3.5 px-4 font-bold text-white">Ryan Kipping</td>
+                <td class="py-3.5 px-4 text-slate-300">Just the Kip 🍆</td>
+                <td class="py-3.5 px-4 text-center">
+                  <span class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-emerald-500/20 text-emerald-400 font-black text-sm border border-emerald-500/30">X</span>
+                </td>
+                <td class="py-3.5 px-4 text-center text-slate-600 font-bold">--</td>
+                <td class="py-3.5 px-4 text-center">
+                  <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Alive</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- TAB 4: PREVIOUS YEAR RESULTS & ALL-TIME HISTORY -->
     <!-- ======================================================== -->
     <section id="tab-history" class="tab-content space-y-6">
       
